@@ -9,11 +9,11 @@
  *
  * Copyright (c) 2011 David Hodo
  *
- * Permission is hereby granted, free of charge, to any person obtaining a 
- * copy of this software and associated documentation files (the "Software"), 
- * to deal in the Software without restriction, including without limitation 
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, 
- * and/or sell copies of the Software, and to permit persons to whom the 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in
@@ -23,17 +23,17 @@
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  *
  * \section DESCRIPTION
  *
  * This provides an interface for the Crossbow DMU-6X-003 inertial measurement unit.
- * 
+ *
  * This library depends on CMake-2.4.6 or later: http://www.cmake.org/
  * This library depends on Serial: https://github.com/wjwwood/serial
- * 
+ *
  */
 
 
@@ -94,24 +94,24 @@ struct ImuData {
 
 /*!
  * This function type describes the prototype for the logging callbacks.
- * 
- * The function takes a std::string reference and returns nothing.  It is 
- * called from the library when a logging message occurs.  This 
- * allows the library user to hook into this and integrate it with their own 
- * logging system.  It can be set with any of the set<log level>Handler 
+ *
+ * The function takes a std::string reference and returns nothing.  It is
+ * called from the library when a logging message occurs.  This
+ * allows the library user to hook into this and integrate it with their own
+ * logging system.  It can be set with any of the set<log level>Handler
  * functions.
- * 
- * @see SerialListener::setInfoHandler, SerialListener::setDebugHandler, 
+ *
+ * @see SerialListener::setInfoHandler, SerialListener::setDebugHandler,
  * SerialListener::setWarningHandler
  */
 typedef boost::function<void(const std::string&)> LoggingCallback;
 
 /*!
  * This function type describes the prototype for the data callback.
- * 
- * The function takes a xbow6x::imuData reference and returns nothing.  It is 
+ *
+ * The function takes a xbow6x::imuData reference and returns nothing.  It is
  * called from the library when new data arrives and is parsed.
- * 
+ *
  * @see XBOW6X::setDataHandler
  */
 typedef boost::function<void(const xbow6x::ImuData&)> DataCallback;
@@ -119,17 +119,17 @@ typedef boost::function<void(const xbow6x::ImuData&)> DataCallback;
 
 class XBOW6X{
 public:
-	
+
 	XBOW6X();
 
 	~XBOW6X(){};
-	
+
     /*!
      * Connects to the XBOW6X IMU given a serial port.
-     * 
+     *
      * @param port Defines which serial port to connect to in serial mode.
      * Examples: Linux - "/dev/ttyS0" Windows - "COM1"
-     * 
+     *
      * @throws ConnectionFailedException connection attempt failed.
      * @throws UnknownErrorCodeException unknown error code returned.
      */
@@ -143,34 +143,34 @@ public:
 
    /*!
     * Pings the IMU to determine if it is properly connected
-    * 
+    *
     * This method sends a ping to the IMU and waits for a response.
-    * 
+    *
     * @param num_attempts The number of times to ping the device
     * before giving up
     * @param timeout The time in milliseconds to wait for each reponse
     *
     * @return True if the IMU was found, false if it was not.
-    * 
+    *
     * @see XBOW6X::DataCallback
     */
     bool Sync(int num_attempts=5);
 
    /*!
     * Sets the handler to be called when a new data is received.
-    * 
-    * This allows you to set a catch all function that will get called 
+    *
+    * This allows you to set a catch all function that will get called
     * everytime a new data packet is received from the IMU.
-    * 
-    * \param default_handler A function pointer to the callback to handle 
+    *
+    * \param default_handler A function pointer to the callback to handle
     * parsed IMU data.
-    * 
+    *
     * \see XBOW6X::DataCallback
     */
     void set_data_handler(DataCallback data_handler) {
         this->data_handler_ = data_handler;
     }
-    
+
     // NOT IMPLEMENTED YET
     //bool SetOutputRate(unsigned short rate); //!< set rate to 0, 1, 2, 5, 10, 20, 25, 50Hz
 
@@ -178,29 +178,29 @@ private:
 
    /*!
     * Starts a thread to continuously read from the serial port.
-    * 
+    *
     * Starts a thread that runs 'ReadSerialPort' which constatly reads
     * from the serial port.  When valid data is received, parse and then
     *  the data callback functions are called.
-    * 
+    *
     * @see XBOW6X::DataCallback, XBOW6X::XBOW6X::ReadSerialPort, XBOW6X::XBOW6X::StopReading
     */
     void StartReading();
 
    /*!
     * Starts the thread that reads from the serial port
-    * 
+    *
     * @see XBOW6X::XBOW6X::ReadSerialPort, XBOW6X::XBOW6X::StartReading
     */
     void StopReading();
 
    /*!
     * Method run in a seperate thread that continuously reads from the
-    * serial port.  When a complete packet is received, the parse 
+    * serial port.  When a complete packet is received, the parse
     * method is called to process the data
-    * 
+    *
     * @see XBOW6X::XBOW6X::Parse, XBOW6X::XBOW6X::StartReading, XBOW6X::XBOW6X::StopReading
-    */    
+    */
     void ReadSerialPort();
 
    /*!
@@ -210,7 +210,7 @@ private:
     void Resync();
 
    /*!
-    * Parses a packet of data from the IMU.  Scale factors are 
+    * Parses a packet of data from the IMU.  Scale factors are
     * also applied to the data to convert into engineering units.
     */
     void Parse(unsigned char *packet);
@@ -218,19 +218,19 @@ private:
     //! Serial port object for communicating with sensor
     serial::Serial *serial_port_;
     //! most recently parsed IMU data
-    ImuData imu_data_;      
+    ImuData imu_data_;
     ShortsUnion s1contents;    //!< union for converting bytes to shorts
     IntsUnion s2contents;    //!< union for converting bytes to ints
 
    /*!
     * The number of bytes read during each call to read on the serial
-    * port.  This value is set intially to 31 (assumes an S2 packet), 
+    * port.  This value is set intially to 31 (assumes an S2 packet),
     * but is modified by Resync to match the size of the packets actually
     * being received.
-    */  
+    */
     size_t read_size_;
-    //! shared pointer to Boost thread for listening for data from xbow 
-    boost::shared_ptr<boost::thread> read_thread_ptr_;  
+    //! shared pointer to Boost thread for listening for data from xbow
+    boost::shared_ptr<boost::thread> read_thread_ptr_;
     bool reading_status_;  //!< True if the read thread is running, false otherwise.
     DataCallback data_handler_; //!< Function pointer to callback function for parsed data
 };

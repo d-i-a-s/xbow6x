@@ -34,37 +34,37 @@ int main(int argc, char **argv)
 
   string port_name;
   node_handle.param("port", port_name, string("/dev/ttyUSB0"));
-  
+
   int baudrate;
   node_handle.param<int>("baudrate", baudrate, 38400);
-  
+
   node_handle.param<string>("frame_id", frame_id, string("cbimu_frame"));
-  
+
   node_handle.getParam("ang_vel_mean", ang_vel_mean);
 
   node_handle.getParam("lin_acc_mean", lin_acc_mean);
-  
+
   std::vector<double> orientation_cov;
   node_handle.getParam("orientation_cov", orientation_cov);
   for(int i = 0; i < 9; i++) {
     msg.orientation_covariance[i] = orientation_cov[i];
   }
-  
+
   std::vector<double> ang_vel_cov;
   node_handle.getParam("ang_vel_cov", ang_vel_cov);
   for(int i = 0; i < 9; i++) {
     msg.angular_velocity_covariance[i] = ang_vel_cov[i];
   }
-  
+
   std::vector<double> lin_acc_cov;
   node_handle.getParam("lin_acc_cov", lin_acc_cov);
   for(int i = 0; i < 9; i++) {
     msg.linear_acceleration_covariance[i] = lin_acc_cov[i];
   }
-  
+
   XBOW6X xbow;
   xbow.set_data_handler(PublishImuData);
-  
+
   if (xbow.Connect(port_name, baudrate)) {
     ros::spin();
     xbow.Disconnect();

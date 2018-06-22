@@ -1,7 +1,7 @@
 #include "xbow6x/xbow6x.h"
 using namespace xbow6x;
 
-#define WIN32_LEAN_AND_MEAN 
+#define WIN32_LEAN_AND_MEAN
 #define _USE_MATH_DEFINES
 #include "boost/date_time/posix_time/posix_time.hpp"
 
@@ -19,7 +19,7 @@ void DefaultProcessData(const ImuData& data) {
 }
 
 XBOW6X::XBOW6X()
-{	
+{
 	serial_port_ = NULL;
 	data_handler_ = DefaultProcessData;
 	read_size_ = 18;
@@ -74,7 +74,7 @@ bool XBOW6X::Sync(int num_attempts) {
 
 		// see if we got a response or a timeout
 		found_ping_response = read_data.find("H");
-        
+
 		if (found_ping_response != string::npos) {
             found_ping_response = string::npos;
             std::cout << "DMU good reply to reset command: " << read_data << std::endl;
@@ -82,7 +82,7 @@ bool XBOW6X::Sync(int num_attempts) {
             serial_port_->write("c");
             // wait for response
             serial_port_->read(read_data,1000);
-            
+
             // see if we got a ping response or a timeout
             found_ping_response = read_data.find("C");
             if (found_ping_response != string::npos) {
@@ -116,7 +116,7 @@ void XBOW6X::ReadSerialPort() {
     serial_port_->write("C");
     // syncs data stream
 	Resync();
-    
+
 	while (reading_status_) {
 		len = serial_port_->read(buffer, read_size_);
         // time stamp
@@ -138,7 +138,7 @@ void XBOW6X::ReadSerialPort() {
             for(i = 0; i < len; i++)
                 std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)buffer[i] << " ";
             std::cout << std::endl;
-            
+
             std::cout <<"Computed checksum: " << sum << " Data checksum: " << (int)buffer[(len - 1)] << std::endl;
 			Resync();
 			continue;
@@ -173,7 +173,7 @@ void XBOW6X::Resync() {
                 sum += (int)data[i];
             }
             sum = sum % 256;
-            
+
 			if (sum == (int)data[16] && len == 17) {
 				synced = true;
 				break;
@@ -209,7 +209,7 @@ void XBOW6X::Parse(unsigned char *packet) {
     else
        imu_data_.yawrate = -32768 + ((packet[5] & 0x7F) << 8) + packet[6];
     imu_data_.yawrate *= 1.5*150.0/32768.0*M_PI/180; // rad/sec
-    
+
     if ((packet[7] & 0x80) == 0)
          imu_data_.ax = ((packet[7] << 8) + packet[8]);
     else
@@ -227,12 +227,12 @@ void XBOW6X::Parse(unsigned char *packet) {
     else
          imu_data_.az = -32768 + ((packet[11] & 0x7F) << 8)+packet[12];
     imu_data_.az *= 1.5*10.0/32768.0*9.81; // m^2/s
-    
+
 //     m_rawTemp = ((packet[13] <<8) + packet[14]);
 //     m_rawTemp = (m_rawTemp*5.0/4096.0 - 1.375)* 44.4; // Convert to celcuis.
 
     // call callback with data
     if (data_handler_ != NULL)
     	data_handler_(imu_data_);
-    
+
 }
