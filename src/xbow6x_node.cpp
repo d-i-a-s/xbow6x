@@ -21,7 +21,7 @@ void PublishImuData(const ImuData& data) {
     msg.linear_acceleration.x = data.ax - lin_acc_mean[0];
     msg.linear_acceleration.y = data.ay - lin_acc_mean[1];
     msg.linear_acceleration.z = data.az - lin_acc_mean[2];
-    msg.orientation.x = 1;
+    msg.orientation.w = 1;
     imu_pub.publish(msg);
 }
 
@@ -30,7 +30,7 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "xbow6x_node");
   ros::NodeHandle node_handle("~");
 
-  imu_pub = node_handle.advertise<sensor_msgs::Imu>("imu/data_raw", 1);
+  imu_pub = node_handle.advertise<sensor_msgs::Imu>("data_raw", 1);
 
   string port_name;
   node_handle.param("port", port_name, string("/dev/ttyUSB0"));
