@@ -1,6 +1,6 @@
 <launch>
   <arg name="ns" default="/xbow6x"/>
-  <arg name="serialPort" default="/dev/ttyUSB1"/>
+  <arg name="serialPort" default="/dev/ttyUSB0"/>
   <arg name="frame_id" default="cbimu_frame"/>
 
   <node ns="$(arg ns)" name="xbow6x_node" pkg="xbow6x" type="xbow6x_node" output="screen" required="true">
